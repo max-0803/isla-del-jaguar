@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Astrocamping · Isla del Jaguar — Iquitos</title>
+  <meta name="description" content="Vive la Vía Láctea desde un cielo clase 1 en la Amazonía. Paquetes 2D/1N y 3D/2N con telescopios, RV y guías locales. Reserva online." />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#030214;
+      --card:#0b0b16;
+      --accent:#7b3bff;
+      --accent-2:#00d1c1;
+      --muted:#a9acc1;
+      --glass: rgba(255,255,255,0.04);
+      --max-width:1100px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,Arial, sans-serif;
+      background: radial-gradient(ellipse at bottom, rgba(10,6,25,1) 0%, rgba(2,1,8,1) 60%), var(--bg);
+      color:#eef1ff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+      overflow-x:hidden;
+    }
+
+    /* STAR CANVAS */
+    #starfield{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+    /* LAYOUT */
+    .site{position:relative;z-index:2;max-width:var(--max-width);margin:0 auto;padding:0 20px}
+    header{
+      display:flex;align-items:center;justify-content:space-between;padding:22px 0;
+      position:relative;
+    }
+    .logo{display:flex;align-items:center;gap:12px;font-weight:700;font-family:Montserrat, sans-serif}
+    .logo .dot{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:#020214;font-weight:800}
+    nav a{color:var(--muted);text-decoration:none;margin-left:18px;font-weight:600}
+    nav a:hover{color:#fff}
+
+    /* HERO */
+    .hero{
+      min-height:72vh;
+      display:flex;
+      align-items:center;
+      position:relative;
+      padding:40px 0 80px;
+      z-index:1;
+    }
+    .hero .left{flex:1;padding-right:30px}
+    .hero h1{font-family:Montserrat, sans-serif;font-size:38px;margin:0 0 8px;letter-spacing:-0.02em}
+    .hero p{color:var(--muted);margin:0 0 18px;max-width:54ch}
+    .cta-row{display:flex;gap:12px;align-items:center}
+    .btn{
+      background:linear-gradient(90deg,var(--accent),var(--accent-2));border:0;padding:12px 18px;border-radius:10px;color:#020214;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(124,59,255,0.15)
+    }
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff}
+
+    .hero .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px;padding:18px;margin-top:18px;backdrop-filter:blur(4px);box-shadow:0 8px 30px rgba(2,1,8,0.6);
+    }
+
+    /* SECTIONS */
+    section{padding:54px 0;border-top:1px solid rgba(255,255,255,0.02)}
+    .section-title{display:flex;align-items:end;gap:12px;margin-bottom:18px}
+    .section-title h2{margin:0;font-family:Montserrat;font-size:20px}
+    .muted{color:var(--muted);font-size:15px}
+
+    .grid{display:grid;gap:18px}
+    .cols-2{grid-template-columns:repeat(2,1fr)}
+    .cols-3{grid-template-columns:repeat(3,1fr)}
+    .card{background:var(--card);padding:18px;border-radius:12px}
+
+    /* ITINERARY */
+    .itinerary .item{display:flex;gap:14px;align-items:flex-start}
+    .tag{background:linear-gradient(90deg,var(--accent),var(--accent-2));padding:6px 10px;border-radius:8px;font-weight:700;color:#020214;font-size:13px}
+
+    /* GALLERY */
+    .gallery {display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .gallery img{width:100%;height:150px;object-fit:cover;border-radius:8px;cursor:pointer;display:block}
+
+    /* PRICING */
+    .pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    .price{padding:18px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));text-align:center}
+    .price h3{margin:0 0 6px}
+
+    /* RESERVAS FORM */
+    form{display:grid;gap:12px}
+    input,select,textarea{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px;border-radius:8px;color:#fff;outline:none}
+    input::placeholder, textarea::placeholder{color:rgba(255,255,255,0.35)}
+    .form-row{display:flex;gap:12px}
+    .form-row > *{flex:1}
+
+    /* LIGHTBOX */
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,1,8,0.8);z-index:9999}
+    .modal.open{display:flex}
+    .modal img{max-width:92%;max-height:86%;border-radius:6px}
+
+    footer{padding:28px 0;color:var(--muted);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+    .whatsapp{
+      position:fixed;right:18px;bottom:18px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#020214;padding:12px;border-radius:999px;display:flex;gap:8px;align-items:center;z-index:2000;box-shadow:0 10px 30px rgba(0,0,0,0.4)
+    }
+    .small{font-size:13px;color:var(--muted)}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .hero{flex-direction:column}
+      .hero .left{padding-right:0}
+      .gallery{grid-template-columns:repeat(2,1fr)}
+      nav{display:none}
+    }
+    @media (max-width:600px){
+      .gallery img{height:110px}
+      .hero h1{font-size:28px}
+      .logo .dot{width:30px;height:30px}
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- STAR CANVAS -->
+  <canvas id="starfield"></canvas>
+
+  <div class="site" id="top">
+    <header>
+      <div class="logo">
+        <div class="dot">AJ</div>
+        <div>
+          <div style="font-size:14px">Astrocamping</div>
+          <div style="font-size:12px;color:var(--muted)">Isla del Jaguar · Iquitos</div>
+        </div>
+      </div>
+
+      <nav>
+        <a href="#home">Inicio</a>
+        <a href="#about">Sobre</a>
+        <a href="#experience">Experiencia</a>
+        <a href="#activities">Actividades</a>
+        <a href="#gallery">Galería</a>
+        <a href="#pricing">Tarifas</a>
+        <a href="#contact">Contacto</a>
+        <a href="#location">Ubicación</a>
+      </nav>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero" id="home" aria-label="Inicio">
+      <div class="left">
+        <h1>Astrocamping · Isla del Jaguar</h1>
+        <p>Vive la Vía Láctea desde un cielo clase 1 en la Amazonía. Glamping + sesiones astronómicas, RV y relatos de la cosmovisión local.</p>
+
+        <div class="cta-row">
+          <button class="btn" id="reserveBtn">Reservar ahora</button>
+          <a class="btn ghost" href="#experience">Ver experiencia 360</a>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="flex:1">
+              <div style="font-weight:700">Paquetes desde S/.500</div>
+              <div class="muted" style="font-size:13px">Incluye transporte fluvial desde Iquitos, alojamiento y sesión astronómica.</div>
+            </div>
+            <div style="text-align:right">
+              <div class="small">Contacto</div>
+              <div style="font-weight:700">+51 974 486 378</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex:0 0 420px;position:relative">
+        <div style="border-radius:12px;overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 20px 40px rgba(2,1,8,0.6)">
+          <iframe src="https://www.thinglink.com/view/scene/2031092460838453734" width="420" height="320" frameborder="0" allowfullscreen title="Experiencia 360 - Isla del Jaguar"></iframe>
+        </div>
+
+        <div style="margin-top:12px;background:var(--glass);padding:10px;border-radius:10px">
+          <div style="font-weight:700">Próxima salida</div>
+          <div class="muted" style="font-size:13px">Consulta disponibilidad — plazas limitadas por noche</div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about">
+      <div class="section-title">
+        <h2>Sobre el proyecto</h2>
+        <div class="muted">Un proyecto que une cielo, selva y cultura</div>
+      </div>
+
+      <div class="card">
+        <p>
+          El Astrocamping en la Isla del Jaguar ofrece una experiencia única de astroturismo en un cielo de <strong>clase 1</strong>, ideal para observar la Vía Láctea y constelaciones desde el ecuador.
+          Integramos telescopios, estaciones de Realidad Virtual (RV) y relatos de la cosmovisión amazónica para crear una experiencia educativa y respetuosa con la comunidad local.
+        </p>
+        <p class="muted">Operamos con estándares de sostenibilidad, permisos locales y seguros de visitante. Contacto: <strong>maxgalecio8@gmail.com</strong></p>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience">
+      <div class="section-title">
+        <h2>Experiencia Astroturística</h2>
+        <div class="muted">Sesiones guiadas, RV y observación profesional</div>
+      </div>
+
+      <div class="grid cols-2">
+        <div class="card">
+          <h3 style="margin-top:0">Qué vivirás</h3>
+          <ul class="muted">
+            <li>Sesión nocturna guiada con telescopios y puntero láser (2 horas aprox.).</li>
+            <li>Zona de Realidad Virtual para observar galaxias y simulaciones.</li>
+            <li>Relatos y mitos amazónicos bajo las estrellas con narradores locales.</li>
+            <li>Observación de objetos profundos (nebulosas, cúmulos) cuando la noche es óptima.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0">Explora la experiencia 360</h3>
+          <div style="border-radius:8px;overflow:hidden">
+            <!-- Thinglink iframe (ya proporcionado) -->
+            <iframe src="https://www.thinglink.com/view/scene/2031092460838453734" width="100%" height="300" frameborder="0" allowfullscreen title="Thinglink 360"></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACTIVITIES -->
+    <section id="activities">
+      <div class="section-title">
+        <h2>Actividades</h2>
+        <div class="muted">Itinerarios y actividades a la carta</div>
+      </div>
+
+      <div class="grid cols-2 itinerary">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div class="tag">2D / 1N</div>
+              <h3 style="margin:6px 0 0">Paquete Esencial</h3>
+            </div>
+            <div style="text-align:right">
+              <div class="muted">Desde</div>
+              <div style="font-weight:700">S/.500 por pax</div>
+            </div>
+          </div>
+          <p class="muted" style="margin-top:12px">
+            Incluye transporte fluvial ida y vuelta desde Iquitos, alojamiento en carpa temática, alimentación (almuerzo, cena, desayuno) y sesión astronómica guiada.
+          </p>
+        </div>
+
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div class="tag">3D / 2N</div>
+              <h3 style="margin:6px 0 0">Paquete Completo</h3>
+            </div>
+            <div style="text-align:right">
+              <div class="muted">Desde</div>
+              <div style="font-weight:700">S/.850 por pax</div>
+            </div>
+          </div>
+          <p class="muted" style="margin-top:12px">
+            Incluye segunda sesión astronómica, taller de cosmovisión, y excursiones diurnas adicionales.
+          </p>
+        </div>
+      </div>
+
+      <div style="margin-top:18px" class="card">
+        <h4 style="margin:0 0 8px">Servicios a la carta</h4>
+        <div class="muted">
+          Sesión astronómica premium (telescopio privado + RV): S/.150–S/.200. <br>
+          Talleres de astronomía/cosmovisión: S/.50–S/.80. Excursiones diurnas: S/.80.
+        </div>
+      </div>
+    </section>
+
+   <!-- GALLERY -->
+<section id="gallery">
+  <div class="section-title">
+    <h2>Galería</h2>
+    <div class="muted">Fotos nocturnas, domos y momentos del campamento</div>
+  </div>
+
+  <div class="gallery" aria-label="Galería de imágenes">
+    <img src="img/foto1.png" alt="astrocamping amazónico">
+    <img src="img/foto2.png" alt="Zona de estancia">
+    <img src="img/foto3.png" alt="Zona de recepcion">
+    <img src="img/foto4.png" alt="Zona de sanitarios y duchas">
+    <img src="img/foto5.png" alt="Zona del comedor">
+    <img src="img/foto6.png" alt="Zona de realidad virtual">
+    <img src="img/foto7.png" alt="Zona de observacion de estrellas">
+    <img src="img/foto8.png" alt="Zona de primeros auxilios">
+    <img src="img/foto9.png" alt="Proyecto completo"> 
+    <img src="img/foto10.png" alt="Zona de RV 3D">
+  </div>
+</section> 
+
+    <!-- PRICING / RESERVAS -->
+    <section id="pricing">
+      <div class="section-title">
+        <h2>Tarifas / Reservas</h2>
+        <div class="muted">Elige tu paquete y reserva en línea</div>
+      </div>
+
+      <div class="pricing-grid">
+        <div class="price card">
+          <h3>2D / 1N</h3>
+          <div class="muted">Experiencia esencial</div>
+          <div style="font-weight:800;margin:12px 0">S/.500 por pax</div>
+          <div class="small">Incluye transporte desde Iquitos, alojamiento y sesión astronómica</div>
+        </div>
+
+        <div class="price card">
+          <h3>3D / 2N</h3>
+          <div class="muted">Experiencia completa</div>
+          <div style="font-weight:800;margin:12px 0">S/.850 por pax</div>
+          <div class="small">Segunda sesión astronómica + talleres</div>
+        </div>
+
+        <div class="price card">
+          <h3>Sesión Premium</h3>
+          <div class="muted">Telescopio privado + RV</div>
+          <div style="font-weight:800;margin:12px 0">S/.150–S/.200</div>
+          <div class="small">Reserva como extra</div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px" class="card">
+        <h3>Formulario de Reserva</h3>
+        <p class="muted" style="margin-top:6px">Haz tu reserva ahora. Recomendamos solicitar un depósito del 30% para confirmar.</p>
+
+        <!-- FORM: change FORM_ENDPOINT below to your Formspree endpoint or your backend URL -->
+        <form id="reservationForm" novalidate>
+          <div class="form-row">
+            <input type="text" id="name" name="name" placeholder="Nombre completo" required>
+            <input type="tel" id="phone" name="phone" placeholder="Teléfono (WhatsApp)" required>
+          </div>
+          <div class="form-row">
+            <input type="email" id="email" name="email" placeholder="Correo electrónico" required>
+            <input type="date" id="date" name="date" placeholder="Fecha de llegada" required>
+          </div>
+          <div class="form-row">
+            <select id="package" name="package" required>
+              <option value="">Selecciona paquete</option>
+              <option value="2D/1N - S/.500">2D/1N - S/.500</option>
+              <option value="3D/2N - S/.850">3D/2N - S/.850</option>
+              <option value="Sesión Premium - S/.150+">Sesión Premium</option>
+            </select>
+            <input type="number" id="pax" name="pax" placeholder="N° de personas" min="1" value="2" required>
+          </div>
+          <textarea id="notes" name="notes" placeholder="Comentarios / Solicitudes especiales (alergias, recojo en hotel, etc.)" rows="4"></textarea>
+
+          <div style="display:flex;gap:10px;align-items:center;margin-top:6px">
+            <button class="btn" type="submit">Enviar reserva</button>
+            <button type="button" class="btn ghost" id="clearForm">Limpiar</button>
+            <div id="formStatus" class="small muted" style="margin-left:auto"></div>
+          </div>
+        </form>
+
+        <div class="muted small" style="margin-top:12px">
+          Política de cancelación recomendada: reembolso total hasta 15 días antes; 50% entre 14–7 días; no reembolso <7 días.
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="section-title">
+        <h2>Contacto</h2>
+        <div class="muted">Reservas y consultas</div>
+      </div>
+
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>Contacto directo</h3>
+          <p class="muted">
+            Email: <a href="mailto:maxgalecio8@gmail.com" style="color:inherit;text-decoration:underline">maxgalecio8@gmail.com</a><br>
+            WhatsApp: <a href="https://wa.me/51974486378" target="_blank" style="color:inherit;text-decoration:underline">+51 974 486 378</a>
+          </p>
+          <p class="muted">Horario de atención: 08:00–20:00 (hora de Iquitos). Respuesta en <24h en temporada baja.</p>
+        </div>
+
+        <div class="card">
+          <h3>FAQs rápidas</h3>
+          <div class="muted">
+            <strong>¿Qué llevar?</strong> Ropa ligera para el día, abrigo para la noche, repelente, linterna y calzado cómodo.<br><br>
+            <strong>¿Niños?</strong> Actividades aptas para familias; niños pagan tarifa reducida según edad.<br><br>
+            <strong>¿Pagos?</strong> Tarjeta/PSE/depósito (según pasarela). Podemos coordinar pago vía WhatsApp.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOCATION -->
+    <section id="location">
+      <div class="section-title">
+        <h2>Ubicación / Cómo llegar</h2>
+        <div class="muted">Transporte fluvial incluido desde puntos céntricos</div>
+      </div>
+
+      <div class="card">
+        <p class="muted">Operamos desde Iquitos. El servicio incluye recojo en puntos acordados (Plaza de Armas, aeropuerto o hoteles seleccionados), traslado en lancha hacia la Isla del Jaguar. La duración del traslado varía según punto de partida; consultanos para coordinar horarios exactos.</p>
+
+        <div style="margin-top:12px">
+          <!-- Small embedded map placeholder - replace with your Google Map iframe or Mapbox if you have one -->
+          <iframe src="https://www.google.com/maps?q=Iquitos&output=embed" width="100%" height="260" frameborder="0" style="border:0;border-radius:8px"></iframe>
+        </div>
+
+      </div>
+    </section>
+
+    <footer>
+      <div class="small">© <strong>Astrocamping · Isla del Jaguar</strong> · Iquitos — Contacto: <a href="mailto:maxgalecio8@gmail.com" style="color:inherit">maxgalecio8@gmail.com</a></div>
+      <div class="small">Diseño moderno · Reservas online</div>
+    </footer>
+
+  </div> <!-- /site -->
+
+  <!-- LIGHTBOX MODAL -->
+  <div id="lightbox" class="modal" role="dialog" aria-hidden="true">
+    <img src="#" alt="Imagen ampliada">
+  </div>
+
+  <!-- WHATSAPP FLOAT -->
+  <a class="whatsapp" href="https://wa.me/51974486378" target="_blank" aria-label="WhatsApp">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20.5 3.5L3.5 20.5" stroke="black" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Reservar por WhatsApp
+  </a>
+
+  <script>
+    /*****************************************
+     * STARFIELD CANVAS
+     *****************************************/
+    const canvas = document.getElementById('starfield');
+    const ctx = canvas.getContext('2d');
+    let w = canvas.width = innerWidth;
+    let h = canvas.height = innerHeight;
+    window.addEventListener('resize', ()=>{w = canvas.width = innerWidth; h = canvas.height = innerHeight});
+
+    const numStars = Math.floor((w*h)/6000);
+    const stars = [];
+    for(let i=0;i<numStars;i++){
+      stars.push({
+        x: Math.random()*w,
+        y: Math.random()*h,
+        z: Math.random()*1.2+0.1,
+        o: Math.random()*0.7+0.3
+      });
+    }
+
+    function drawStars(){
+      ctx.clearRect(0,0,w,h);
+      for(let s of stars){
+        const size = (s.z*1.6);
+        ctx.beginPath();
+        ctx.fillStyle = 'rgba(255,255,255,' + s.o + ')';
+        ctx.arc(s.x, s.y, size, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+    let t = 0;
+    function animate(){
+      t+=0.01;
+      for(let s of stars){
+        s.y += 0.15 * s.z + Math.sin(t+s.x*0.0005)*0.05;
+        if(s.y > h + 10) { s.y = -10; s.x = Math.random()*w; }
+      }
+      drawStars();
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    /*****************************************
+     * SIMPLE PARALLAX ON SCROLL (background shift)
+     *****************************************/
+    window.addEventListener('scroll', ()=> {
+      const sc = window.scrollY;
+      document.body.style.backgroundPosition = `center ${-sc*0.02}px`;
+    });
+
+    /*****************************************
+     * GALLERY LIGHTBOX
+     *****************************************/
+    const imgs = document.querySelectorAll('.gallery img');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = lightbox.querySelector('img');
+
+    imgs.forEach(img=>{
+      img.addEventListener('click', ()=>{
+        lightboxImg.src = img.dataset.src || img.src;
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden','false');
+      });
+    });
+
+    lightbox.addEventListener('click', (e)=>{
+      if(e.target === lightbox || e.target === lightboxImg){
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden','true');
+      }
+    });
+
+    /*****************************************
+     * RESERVATION FORM: submit via fetch to Formspree or your backend
+     * Replace FORM_ENDPOINT with your actual endpoint.
+     *****************************************/
+    const FORM_ENDPOINT = 'https://formspree.io/f/yourFormID'; // <-- REPLACE this with your Formspree endpoint or backend URL
+
+    const form = document.getElementById('reservationForm');
+    const status = document.getElementById('formStatus');
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      status.textContent = 'Enviando...';
+      const data = new FormData(form);
+      // Add extra fields if needed
+      try{
+        const res = await fetch(FORM_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: data
+        });
+        if(res.ok){
+          status.textContent = 'Reserva enviada. Te contactaremos pronto.';
+          form.reset();
+        } else {
+          const err = await res.json();
+          console.error('Form error', err);
+          status.textContent = 'Error al enviar. Intenta por WhatsApp.';
+        }
+      } catch(err){
+        console.error(err);
+        status.textContent = 'No fue posible conectar con el servidor. Usa WhatsApp.';
+      }
+    });
+
+    document.getElementById('clearForm').addEventListener('click', ()=>{form.reset();status.textContent='';});
+
+    /*****************************************
+     * NAV: scroll to reserva when clicking reserve
+     *****************************************/
+    document.getElementById('reserveBtn').addEventListener('click', ()=>{
+      document.getElementById('pricing').scrollIntoView({behavior:'smooth'});
+    });
+
+    /*****************************************
+     * Accessibility: keyboard close lightbox
+     *****************************************/
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape' && lightbox.classList.contains('open')){
+        lightbox.classList.remove('open');
+      }
+    });
+
+  </script>
+</body>
+</html>
